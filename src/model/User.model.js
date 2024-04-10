@@ -38,31 +38,7 @@ const userSchema = new Schema(
         },
         refreshToken: {
             type: String
-        },
-        yourVideos: [
-            {
-                type: Types.ObjectId,
-                ref: "Video"
-            }
-        ],
-        watchHistory: [
-            {
-                type: Types.ObjectId,
-                ref: "Video"
-            }
-        ],
-        watchLater: [
-            {
-                type: Types.ObjectId,
-                ref: "Video"
-            }
-        ],
-        LikedVideos: [
-            {
-                type: Types.ObjectId,
-                ref: "Video"
-            }
-        ]
+        }
     },
     {
         timestamps: true

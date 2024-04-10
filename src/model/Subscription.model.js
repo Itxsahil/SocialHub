@@ -9,11 +9,7 @@ const subscriptionSchema = new Schema(
         channel: {
             type: Types.ObjectId,
             ref: "User"
-        },
-        // subscriber:{
-        //     type: Types.ObjectId,
-        //     ref:"User"
-        // },
+        }
     },
     {
         timestamps: true

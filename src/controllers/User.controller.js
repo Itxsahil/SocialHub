@@ -4,6 +4,7 @@ import { User } from "../model/User.model.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.uploade.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import { deleteFromeCloudinary } from "../utils/Cloudinary.delete.js";
 
 const generateAccessRefreshTokens = async (userId) => {
     try {
@@ -24,18 +25,18 @@ const generateAccessRefreshTokens = async (userId) => {
 
 const registerUser = asyncHandler(async (req, res) => {
     /*
-        1- take all the data from user || from frontend 
-        2- distructure all of data
-        3- check is all data are avaliable if note then throw an error
-        4- chec if user is already exist 
-        5- check for buffer data
-        6- is avaliable then upload in cloudinary
-        7- creat an object 
-        8- save all of data in db
-        9- remove password and refresh token fron response
-        10- check for user creation
-        11- return response
-        */
+          1- take all the data from user || from frontend 
+          2- distructure all of data
+          3- check is all data are avaliable if note then throw an error
+          4- chec if user is already exist 
+          5- check for buffer data
+          6- is avaliable then upload in cloudinary
+          7- creat an object 
+          8- save all of data in db
+          9- remove password and refresh token fron response
+          10- check for user creation
+          11- return response
+          */
     const { username, fullname, password, email } = req.body;
 
     // console.log(req.body)
@@ -238,68 +239,77 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200).json(200, req.user, "User fached successfully");
 });
 
-const updateUserDetails = asyncHandler(async (req, res) => { 
-    const {fullname, email} = req.body
-    if(!fullname || !email ) throw new ApiError(400, "All fields are required")
+const updateUserDetails = asyncHandler(async (req, res) => {
+    const { fullname, email } = req.body;
+    if (!fullname || !email) throw new ApiError(400, "All fields are required");
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            $set:{
+            $set: {
                 fullname,
-                email
-            }
+                email,
+            },
         },
-        {new:true}
-    ).select("-password")
+        { new: true }
+    ).select("-password");
 
-    return res.status(200)
-    .json(new ApiResponse(200,user,"Account details updated Successfully"))
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Account details updated Successfully"));
 });
 
-const updateAvatar = asyncHandler(async (req, res) =>{
-    const avatarLocalPath = req.file?.path // file is use for a single buffer data
+const updateAvatar = asyncHandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path; // file is use for a single buffer data
 
-    if(!avatarLocalPath) throw new ApiError(400, "Avatar file required")
+    if (!avatarLocalPath) throw new ApiError(400, "Avatar file required");
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath)
-    if(!avatar.url) throw new ApiError(400,"Error while uploading on cloudinary")
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+    if (!avatar.url)
+        throw new ApiError(400, "Error while uploading on cloudinary");
 
-    const user = await User.findByIdAndUpdate(
-        req.user?._id,
-        {
-            $set:{
-                avatar:avatar.url
-            }
-        },{new:true}
-    ).select("-password")
-
-    return res.status(200)
-    .json(new ApiResponse(200,user,"Avatar  updated Successfully"))
-
-})
-
-const updateCoverImage = asyncHandler(async (req, res) =>{
-    const coverImageLocalPath = req.file?.path // file is use for a single buffer data
-
-    if(!coverImageLocalPath) throw new ApiError(400, "Avatar file required")
-
-    const coverImage = await uploadOnCloudinary(avatarLocalPath)
-    if(!coverImage.url) throw new ApiError(400,"Error while uploading on cloudinary")
+    const url = req.user?.avatar;
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
-            $set:{
-                coverImage:coverImage.url
-            }
-        },{new:true}
-    ).select("-password")
+            $set: {
+                avatar: avatar.url,
+            },
+        },
+        { new: true }
+    ).select("-password");
+    await deleteFromeCloudinary(url);
 
-    return res.status(200)
-    .json(new ApiResponse(200,user,"CoverImage  updated Successfully"))
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Avatar  updated Successfully"));
+});
 
-})
+const updateCoverImage = asyncHandler(async (req, res) => {
+    const coverImageLocalPath = req.file?.path; // file is use for a single buffer data
+
+    if (!coverImageLocalPath) throw new ApiError(400, "Avatar file required");
+
+    const coverImage = await uploadOnCloudinary(avatarLocalPath);
+    if (!coverImage.url)
+        throw new ApiError(400, "Error while uploading on cloudinary");
+    const url = req.user?.coverImage
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                coverImage: coverImage.url,
+            },
+        },
+        { new: true }
+    ).select("-password");
+    await deleteFromeCloudinary(url);
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, user, "CoverImage  updated Successfully"));
+});
 
 export {
     registerUser,
@@ -310,5 +320,5 @@ export {
     getCurrentUser,
     updateUserDetails,
     updateAvatar,
-    updateCoverImage
+    updateCoverImage,
 };

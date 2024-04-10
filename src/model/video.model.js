@@ -23,18 +23,6 @@ const videoSchema = new Schema(
             type: String,
             required: true,
         },
-        videoComments: [
-            {
-                commentBy: {
-                    type: Types.ObjectId,
-                    ref: "User",
-                },
-            },
-        ],
-        likes: {
-            typr: Number,
-            default: 0,
-        },
         views: {
             type: Number,
             default: 0,
@@ -43,6 +31,10 @@ const videoSchema = new Schema(
             type: Boolean,
             default: true,
         },
+        duration:{
+            type:Number,
+            required:true
+        }
     },
     {
 
