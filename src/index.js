@@ -1,6 +1,7 @@
 import { ConnectToDb } from "./db/index.js";
-import dotenv from "dotenv"
-dotenv.config()
+import 'dotenv/config'
+// import dotenv from "dotenv"
+// dotenv.config()
 import {app} from "./app.js"
 
 

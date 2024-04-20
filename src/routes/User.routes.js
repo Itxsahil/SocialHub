@@ -39,10 +39,10 @@ router.route("/login").post(loginUser)
 // secure routes
 
 router.route("/logout").post(verifyJWT, logoutUser)
-router.route("/refresh-token").post(refreshAccessToken)
+// router.route("/refresh-token").post(refreshAccessToken)
 
 router.route("/change-password").post(verifyJWT, ChangePassword)
-router.route("/current-user").post(verifyJWT, getCurrentUser)
+router.route("/current-user").get(verifyJWT, getCurrentUser)
 router.route("/update-userDetails").patch(verifyJWT, updateUserDetails)
 router.route("/change-avatar").patch(verifyJWT,upload.single("avatar") ,updateAvatar)
 router.route("/update-coverImage").patch(verifyJWT,upload.single("coverImage"),updateCoverImage)

@@ -5,6 +5,7 @@ import { uploadOnCloudinary } from "../utils/Cloudinary.uploade.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { deleteFromeCloudinary } from "../utils/Cloudinary.delete.js";
+import mongoose from "mongoose";
 
 const generateAccessRefreshTokens = async (userId) => {
     try {
@@ -222,9 +223,9 @@ const ChangePassword = asyncHandler(async (req, res) => {
 
     const user = await User.findById(req.user?._id);
 
-    const isPasswordCurrect = await user.isPasswordCorrect(oldPassword);
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
 
-    if (!isPasswordCurrect) throw new ApiError(400, "Invalid Password");
+    if (!isPasswordCorrect) throw new ApiError(400, "Invalid Password");
 
     user.password = newPassword;
 
@@ -236,7 +237,9 @@ const ChangePassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    return res.status(200).json(200, req.user, "User fached successfully");
+    
+    return res.status(200).json(new ApiResponse(200, req.user, "User fached successfully"));
+    
 });
 
 const updateUserDetails = asyncHandler(async (req, res) => {
@@ -291,7 +294,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
 
     if (!coverImageLocalPath) throw new ApiError(400, "Avatar file required");
 
-    const coverImage = await uploadOnCloudinary(avatarLocalPath);
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
     if (!coverImage.url)
         throw new ApiError(400, "Error while uploading on cloudinary");
     const url = req.user?.coverImage
@@ -418,7 +421,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     ])
 
     return res.status(200)
-    .json(new ApiResponse(200, user[0].watchhistory, "watchHistory fatched successfully"))
+    .json(new ApiResponse(200, user[0].watchHistory, "watchHistory fatched successfully"))
 })
 
 export {

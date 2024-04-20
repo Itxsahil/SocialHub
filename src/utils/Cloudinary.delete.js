@@ -1,20 +1,18 @@
 import { v2 as cloudinary } from "cloudinary";
 cloudinary.config({
-    cloud_name: 'dz0v3z2y5',
-    api_key: '641634265618462',
-    api_secret: 'ucNRLNykxPLgbGWS8UNiYr3kjcs'
-});
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
 
-
-const deleteFromeCloudinary = async (public_url) =>{
+const deleteFromeCloudinary = async (public_url) => {
     try {
-        if(!public_url) return null;
-        const public_id = await cloudinary.utils.extractPublicId(public_url)
-        await cloudinary.uploader.destroy(public_id,
-            {resource_type:"auto" , type: "authenticated"})
-        .then(result => console.log(result))
+        if (!public_url) return null;
+        const publicId  = public_url.split("/").pop().split(".")[0]
+        //const public_id = await cloudinary.utils.extractPublicId(public_url)
+        await cloudinary.uploader.destroy(publicId)
     } catch (error) {
-        console.log("error while uploading on cloudinary ..", error)
+        console.log("error while deleting on cloudinary ..", error)
     }
 }
 
@@ -25,4 +23,4 @@ const deleteFromeCloudinary = async (public_url) =>{
     .destroy('docs/stream', {resource_type: 'video', type: 'authenticated'})
     .then(result => console.log(result));*/
 
-export {deleteFromeCloudinary}
+export { deleteFromeCloudinary }
