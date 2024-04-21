@@ -64,7 +64,13 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     if (!videoId) throw new ApiError(404, "Please provide a video id ")
     if (!title || !videoDescription) throw new ApiError(404, "please enter all the fields ")
 
-    const updatedVideo = await Video.findByIdAndUpdate(videoId,
+    
+
+    const updatedVideo = await Video.findById(videoId)
+    if(!updatedVideo) throw new ApiError(404, "video not found")
+    if(String(updatedVideo.videoOwner) !== String(req.user._id)) throw new ApiError(404,"you are not he video owner")
+
+    const afterupdatedVideo = await Video.findByIdAndUpdate(videoId,
         {
             $set: {
                 title,
@@ -76,10 +82,8 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
         }
     )
 
-    if(!updatedVideo) throw new ApiError(404, "videonot found")
-
     return res.status(200)
-    .json(new ApiResponse(200, updatedVideo, "Video updated successfully"))
+    .json(new ApiResponse(200, afterupdatedVideo, "Video updated successfully"))
 })
 
 export {
