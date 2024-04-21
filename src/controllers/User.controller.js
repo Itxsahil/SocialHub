@@ -28,7 +28,7 @@ const registerUser = asyncHandler(async (req, res) => {
     /*
           1- take all the data from user || from frontend 
           2- distructure all of data
-          3- check is all data are avaliable if note then throw an error
+          3- check is all data are avaliable if not then throw an error
           4- chec if user is already exist 
           5- check for buffer data
           6- is avaliable then upload in cloudinary
@@ -55,7 +55,7 @@ const registerUser = asyncHandler(async (req, res) => {
     // console.log(req.files)
 
     const avatarLocalPath = req.files?.avatar[0]?.path; // files is use to get an array of buffer
-    console.log(avatarLocalPath);
+    // console.log(avatarLocalPath);
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
     let coverImageLocalPath;
@@ -73,7 +73,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
-    if (!avatar) throw new ApiError(400, "cloudinary is working properly..");
+    if (!avatar) throw new ApiError(400, "cloudinary is not  working properly..");
 
     const user = await User.create({
         username,
@@ -92,12 +92,12 @@ const registerUser = asyncHandler(async (req, res) => {
     // select is a method that help us to remove the unwanted fieldes while querying the data from the db call "we have to pass all the fieldes that we dont want from the db with a - sign i a string formate.."
 
     if (!createdUser) {
-        throw new ApiError(500, "Somthin went wrong while regidtring the user");
+        throw new ApiError(500, "Somthin went wrong while registring the user");
     }
 
     return res
         .status(201)
-        .json(new ApiResponse(200, createdUser, "User register ducessfully "));
+        .json(new ApiResponse(200, createdUser, "User register sucessfully "));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
