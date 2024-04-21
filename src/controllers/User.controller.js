@@ -97,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(200, createdUser, "User register sucessfully "));
+        .json(new ApiResponse(200, createdUser, "User register successfully "));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -374,7 +374,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     if (!channel?.length) throw new ApiError(404, "Channel does't exist")
 
     return res.status(200)
-        .json(new ApiResponse(200, channel[0]), "User channel fached sucessfully")
+        .json(new ApiResponse(200, channel[0]), "User channel fached successfully")
 })
 
 const getWatchHistory = asyncHandler(async (req, res) => {

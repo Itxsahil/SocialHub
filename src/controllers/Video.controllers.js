@@ -43,7 +43,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
     if (!UploadedVideo) throw new ApiError(400, "Somthing went wrong while Uploading the video")
     return res.status(200)
-        .json(new ApiResponse(200, UploadedVideo, "Video is uploaded sucessfully"))
+        .json(new ApiResponse(200, UploadedVideo, "Video is uploaded successfully"))
 
 })
 
@@ -55,14 +55,35 @@ const getVideoById = asyncHandler(async (req, res) => {
     if (!video) throw new ApiError(401, " video os not present at DB")
 
     return res.status(200)
-        .json(new ApiResponse(200, video, "Video fatched sucessfully"))
+        .json(new ApiResponse(200, video, "Video fatched successfully"))
 })
 
-const updateVideoDetails = asyncHandler(async(req, res)=>{
-    const {videoId} = req.params
+const updateVideoDetails = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    const { title, videoDescription } = req.body
+    if (!videoId) throw new ApiError(404, "Please provide a video id ")
+    if (!title || !videoDescription) throw new ApiError(404, "please enter all the fields ")
+
+    const updatedVideo = await Video.findByIdAndUpdate(videoId,
+        {
+            $set: {
+                title,
+                videoDescription
+            }
+        },
+        {
+            new:true
+        }
+    )
+
+    if(!updatedVideo) throw new ApiError(404, "videonot found")
+
+    return res.status(200)
+    .json(new ApiResponse(200, updatedVideo, "Video updated successfully"))
 })
 
 export {
     uploadVideo,
-    getVideoById
+    getVideoById,
+    updateVideoDetails
 }
