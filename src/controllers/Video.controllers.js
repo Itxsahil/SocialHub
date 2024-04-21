@@ -3,6 +3,7 @@ import { Video } from "../model/video.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.uploade.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 const uploadVideo = asyncHandler(async (req, res) => {
 
@@ -33,7 +34,7 @@ const uploadVideo = asyncHandler(async (req, res) => {
         videoLink: videoLink.url,
         title,
         thumbnail: thumbnail.url,
-        videoOwner:req.user._id,
+        videoOwner: req.user._id,
         videoDescription,
         duration: videoLink.duration
     })
@@ -42,10 +43,26 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
     if (!UploadedVideo) throw new ApiError(400, "Somthing went wrong while Uploading the video")
     return res.status(200)
-    .json(new ApiResponse(200, UploadedVideo, "Video is uploaded sucessfully"))
+        .json(new ApiResponse(200, UploadedVideo, "Video is uploaded sucessfully"))
 
 })
 
+const getVideoById = asyncHandler(async (req, res) => {
+    const { videoId } = req.params
+    if (!videoId) throw new ApiError(404, "provide a valid video Id")
+
+    const video = await Video.findById({ _id: videoId }).select("-isPublished")
+    if (!video) throw new ApiError(401, " video os not present at DB")
+
+    return res.status(200)
+        .json(new ApiResponse(200, video, "Video fatched sucessfully"))
+})
+
+const updateVideoDetails = asyncHandler(async(req, res)=>{
+    const {videoId} = req.params
+})
+
 export {
-    uploadVideo
+    uploadVideo,
+    getVideoById
 }
