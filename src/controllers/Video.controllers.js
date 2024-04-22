@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHendler.js";
 import { Video } from "../model/video.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { uploadOnCloudinary } from "../utils/Cloudinary.uploade.js";
+import { deleteFromeCloudinary } from "../utils/Cloudinary.delete.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 
@@ -63,9 +64,6 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     const { title, videoDescription } = req.body
     if (!videoId) throw new ApiError(404, "Please provide a video id ")
     if (!title || !videoDescription) throw new ApiError(404, "please enter all the fields ")
-
-    
-
     const updatedVideo = await Video.findById(videoId)
     if(!updatedVideo) throw new ApiError(404, "video not found")
     if(String(updatedVideo.videoOwner) !== String(req.user._id)) throw new ApiError(404,"you are not he video owner")
@@ -86,8 +84,30 @@ const updateVideoDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, afterupdatedVideo, "Video updated successfully"))
 })
 
+const deleteVideo = asyncHandler(async (req, res )=>{
+    const { videoId } = req.params
+    if(!videoId) throw new ApiError(404, "Please enter a valid videoId")
+
+    const videoToBeDeleated = await Video.findById(videoId)
+    const video_url = videoToBeDeleated?.videoLink
+    const thumbnail_url = videoToBeDeleated?.thumbnail
+    if(!videoToBeDeleated) throw new ApiError(404, "video not found")
+    if(String(videoToBeDeleated.videoOwner) !== String(req.user._id)) throw new ApiError(404,"you are not he video owner")
+
+    const VideoIsDeleated = await Video.findByIdAndDelete(videoId)
+    console.log(VideoIsDeleated)
+    if(!VideoIsDeleated) throw new ApiError(404, "video not found")
+    await deleteFromeCloudinary(thumbnail_url, "image");
+    await deleteFromeCloudinary(video_url, "video");
+    console.log(" video is deleated")
+    return res.status(200)
+    .json(new ApiResponse(200,[],"video is deleated successfully"))
+
+})
+
 export {
     uploadVideo,
     getVideoById,
-    updateVideoDetails
+    updateVideoDetails,
+    deleteVideo
 }

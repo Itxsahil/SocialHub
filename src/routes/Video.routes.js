@@ -4,7 +4,8 @@ import { verifyJWT } from "../middlewares/Auth.middleware.js";
 import {
     uploadVideo,
     getVideoById,
-    updateVideoDetails
+    updateVideoDetails,
+    deleteVideo
 } from "../controllers/Video.controllers.js";
 
 
@@ -24,5 +25,6 @@ router.route("/upload-video").post(verifyJWT, upload.fields([
 
 router.route("/:videoId").get(verifyJWT, getVideoById)
 router.route("/videoDetails/:videoId").patch(verifyJWT, updateVideoDetails)
+router.route("/deleatVideo/:videoId").delete(verifyJWT, deleteVideo)
 
 export default router;

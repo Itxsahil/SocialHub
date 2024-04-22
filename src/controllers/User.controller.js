@@ -175,45 +175,48 @@ const logoutUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const incomingRefreshToken =
-        req.cookies.RefreshToken ||
-        req.header("Authorization")?.replace("Bearer ", "");
-    if (!incomingRefreshToken)
-        throw new ApiError(401, "you dont have the refresh token ");
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if (!incomingRefreshToken) throw new ApiError(401, "unauthorized request")
+
     try {
         const decodedToken = jwt.verify(
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
-        );
-        const user = User.findById(decodedToken?._id);
-        if (!user) throw new ApiError(401, "you are not register ");
-        if (incomingRefreshToken !== user?.refreshToken)
-            throw new ApiError(401, "Invalid refresh token");
-
+        )
+    
+        const user = await User.findById(decodedToken?._id)
+    
+        if (!user) throw new ApiError(401, "Invalid refresh token")
+    
+        if (incomingRefreshToken !== user?.refreshToken) {
+            throw new ApiError(401, "Refresh token is expired or used")
+            
+        }
+    
         const options = {
             httpOnly: true,
-            secure: true,
-        };
-
-        const { AccessToken, newRefreshToken } = await generateAccessRefreshTokens(
-            user._id
-        );
-
+            secure: true
+        }
+    
+        const { AccessToken, newRefreshToken } = await generateAccessRefreshTokens(user._id)
+    
         return res
-            .status(200)
-            .cookie("AccessToken", AccessToken, options)
-            .cookie("RefershToken", newRefreshToken, options)
-            .json(
-                new ApiResponse(
-                    200,
-                    { AccessToken, RefreshToken: newRefreshToken },
-                    "AccessToken refreshed successfully"
-                )
-            );
+        .status(200)
+        .cookie("AccessToken", AccessToken, options)
+        .cookie("RefershToken", newRefreshToken, options)
+        .json(
+            new ApiResponse(
+                200, 
+                {AccessToken, RefershToken: newRefreshToken},
+                "Access token refreshed"
+            )
+        )
     } catch (error) {
-        throw new ApiError(401, error?.message || "invalid refresh token");
+        throw new ApiError(401, error?.message || "Invalid refresh token")
     }
-});
+
+})
 
 const ChangePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword, conformPassword } = req.body;
@@ -282,7 +285,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
         },
         { new: true }
     ).select("-password");
-    await deleteFromeCloudinary(url);
+    await deleteFromeCloudinary(url,"image");
 
     return res
         .status(200)
@@ -307,7 +310,7 @@ const updateCoverImage = asyncHandler(async (req, res) => {
         },
         { new: true }
     ).select("-password");
-    await deleteFromeCloudinary(url);
+    await deleteFromeCloudinary(url, "image");
 
     return res
         .status(200)
