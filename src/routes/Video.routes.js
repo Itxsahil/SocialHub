@@ -5,7 +5,8 @@ import {
     uploadVideo,
     getVideoById,
     updateVideoDetails,
-    deleteVideo
+    deleteVideo,
+    togglePublishStatus
 } from "../controllers/Video.controllers.js";
 
 
@@ -20,11 +21,12 @@ router.route("/upload-video").post(verifyJWT, upload.fields([
         name: "thumbnail",
         maxCount: 1
     }
-]),
-    uploadVideo)
+    ]),
+uploadVideo)
 
 router.route("/:videoId").get(verifyJWT, getVideoById)
 router.route("/videoDetails/:videoId").patch(verifyJWT, updateVideoDetails)
 router.route("/deleatVideo/:videoId").delete(verifyJWT, deleteVideo)
+router.route("/:videoId/PublishStatus").patch(verifyJWT, togglePublishStatus)
 
 export default router;
