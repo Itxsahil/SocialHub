@@ -1,9 +1,1 @@
-step 1 = connsect database 
-step 2 = set all the middelewares
-{
-    cors - used for website authentication
-    express.json - allows json data input
-    express.urlencoder - allows data from urlencoder
-    express.static - used to store buffer data
-    cooki-parser - used to do crud operation in clint browser
-}
+

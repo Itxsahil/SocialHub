@@ -48,7 +48,15 @@ const uploadVideo = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, UploadedVideo, "Video is uploaded successfully"))
 
 })
-
+const getVideoList = asyncHandler(async (req, res)=>{
+    console.log("23y8ytu h g78ffdbjjh8y8")
+    const video = await Video.find()
+    .sort({createdAt: -1})
+    .limit(10)
+    console.log(video)
+    return res.status(200)
+    .json(new ApiResponse(200, video, "ok"))
+})
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     if (!videoId) throw new ApiError(404, "provide a valid video Id")
@@ -126,5 +134,6 @@ export {
     getVideoById,
     updateVideoDetails,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    getVideoList
 }
