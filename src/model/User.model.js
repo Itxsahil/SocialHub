@@ -33,12 +33,12 @@ const userSchema = new Schema(
             type: String,//true
             required: true
         },
-        coverImage:{
-            type:String
+        coverImage: {
+            type: String
         },
-        watchHistory:{
-            type:Types.ObjectId,
-            ref:"Video"
+        watchHistory: {
+            type: Types.ObjectId,
+            ref: "Video"
         },
         refreshToken: {
             type: String
@@ -59,7 +59,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password)//it  returns a boolian value by comparing the encrypeted password and the plain text password
 }//we can create a number of custom methodes like this by using "methodes"
 
-userSchema.methods.generateAcessToken =  function () {
+userSchema.methods.generateAcessToken = function () {
     return Jwt.sign(
         {
             _id: this._id,
@@ -80,7 +80,7 @@ userSchema.methods.generateRfreshToken = function () {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn:process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
 }

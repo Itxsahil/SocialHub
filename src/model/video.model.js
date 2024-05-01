@@ -31,9 +31,9 @@ const videoSchema = new Schema(
             type: Boolean,
             default: true,
         },
-        duration:{
-            type:Number,
-            required:true
+        duration: {
+            type: Number,
+            required: true
         }
     },
     {

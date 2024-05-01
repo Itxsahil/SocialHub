@@ -3,16 +3,16 @@ cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure:true
+    secure: true
 })
 
-const deleteFromeCloudinary = async (public_url,resource_type) => {
+const deleteFromeCloudinary = async (public_url, resource_type) => {
     try {
         if (!public_url) return null;
-        const publicId  = public_url.split("/").pop().split(".")[0]
+        const publicId = public_url.split("/").pop().split(".")[0]
         //const public_id = await cloudinary.utils.extractPublicId(public_url)
-        await cloudinary.uploader.destroy(publicId,{
-            resource_type : resource_type
+        await cloudinary.uploader.destroy(publicId, {
+            resource_type: resource_type
         })
     } catch (error) {
         console.log("error while deleting on cloudinary ..", error)

@@ -22,8 +22,8 @@ router.route("/upload-video").post(verifyJWT, upload.fields([
         name: "thumbnail",
         maxCount: 1
     }
-    ]),
-uploadVideo)
+]),
+    uploadVideo)
 
 router.route("/getVideo/:videoId").get(verifyJWT, getVideoById)
 router.route("/videoDetails/:videoId").patch(verifyJWT, updateVideoDetails)

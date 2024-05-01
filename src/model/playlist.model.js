@@ -17,13 +17,13 @@ const PlaylistSchema = new Schema(
                 ref: "Video"
             }
         ],
-        owner:{
-            type:Types.ObjectId,
-            ref:"User"
+        owner: {
+            type: Types.ObjectId,
+            ref: "User"
         }
     },
     {
-        timestamps:true
+        timestamps: true
     }
 )
 

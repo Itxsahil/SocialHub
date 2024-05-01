@@ -184,34 +184,34 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             incomingRefreshToken,
             process.env.REFRESH_TOKEN_SECRET
         )
-    
+
         const user = await User.findById(decodedToken?._id)
-    
+
         if (!user) throw new ApiError(401, "Invalid refresh token")
-    
+
         if (incomingRefreshToken !== user?.refreshToken) {
             throw new ApiError(401, "Refresh token is expired or used")
-            
+
         }
-    
+
         const options = {
             httpOnly: true,
             secure: true
         }
-    
+
         const { AccessToken, newRefreshToken } = await generateAccessRefreshTokens(user._id)
-    
+
         return res
-        .status(200)
-        .cookie("AccessToken", AccessToken, options)
-        .cookie("RefreshToken", newRefreshToken, options)
-        .json(
-            new ApiResponse(
-                200, 
-                {AccessToken, RefreshToken: newRefreshToken},
-                "Access token refreshed"
+            .status(200)
+            .cookie("AccessToken", AccessToken, options)
+            .cookie("RefreshToken", newRefreshToken, options)
+            .json(
+                new ApiResponse(
+                    200,
+                    { AccessToken, RefreshToken: newRefreshToken },
+                    "Access token refreshed"
+                )
             )
-        )
     } catch (error) {
         throw new ApiError(401, error?.message || "Invalid refresh token")
     }
@@ -240,9 +240,9 @@ const ChangePassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-    
+
     return res.status(200).json(new ApiResponse(200, req.user, "User fached successfully"));
-    
+
 });
 
 const updateUserDetails = asyncHandler(async (req, res) => {
@@ -285,7 +285,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
         },
         { new: true }
     ).select("-password");
-    await deleteFromeCloudinary(url,"image");
+    await deleteFromeCloudinary(url, "image");
 
     return res
         .status(200)
@@ -424,7 +424,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     ])
 
     return res.status(200)
-    .json(new ApiResponse(200, user[0].watchHistory, "watchHistory fatched successfully"))
+        .json(new ApiResponse(200, user[0].watchHistory, "watchHistory fatched successfully"))
 })
 
 export {

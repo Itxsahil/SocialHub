@@ -11,10 +11,10 @@ const uploadVideo = asyncHandler(async (req, res) => {
     //1- take all the data from user
     // 2-destr. those data// 2-destr. those data
     // 3-check required fields are present or not
-    const { title, videoDescription,isPublished } = req.body
+    const { title, videoDescription, isPublished } = req.body
     if (!title) throw new ApiError(400, "Title is required..")
     if (!videoDescription) throw new ApiError(400, "videoDescription is required..")
-    if(!isPublished) isPublished = true
+    if (!isPublished) isPublished = true
     // 4-check the files are present or not
     const videoLocalPath = req.files?.video[0]?.path
     const thumbnailLocalPath = req.files?.thumbnail[0]?.path
@@ -48,14 +48,14 @@ const uploadVideo = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, UploadedVideo, "Video is uploaded successfully"))
 
 })
-const getVideoList = asyncHandler(async (req, res)=>{
+const getVideoList = asyncHandler(async (req, res) => {
     console.log("23y8ytu h g78ffdbjjh8y8")
     const video = await Video.find()
-    .sort({createdAt: -1})
-    .limit(10)
+        .sort({ createdAt: -1 })
+        .limit(10)
     console.log(video)
     return res.status(200)
-    .json(new ApiResponse(200, video, "ok"))
+        .json(new ApiResponse(200, video, "ok"))
 })
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params
@@ -63,7 +63,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
     const video = await Video.findById({ _id: videoId })
     if (!video) throw new ApiError(401, " video not found")
-    if(video.isPublished !== true) throw new ApiError(401, "video is private")
+    if (video.isPublished !== true) throw new ApiError(401, "video is private")
 
     return res.status(200)
         .json(new ApiResponse(200, video, "Video fatched successfully"))
@@ -120,13 +120,13 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     if (!videoId) throw new ApiError(401, "Give a  VideoId")
 
     const video = await Video.findById(videoId)
-    if(!video) throw new ApiError(404, "video not found")
+    if (!video) throw new ApiError(404, "video not found")
     if (String(video.videoOwner) !== String(req.user._id)) throw new ApiError(404, "you are not the video owner")
     video.isPublished = !video.isPublished
     const videoToggled = await video.save()
 
     return res.status(200)
-    .json(new ApiResponse(201, videoToggled, "Publish status toggled successfully"))
+        .json(new ApiResponse(201, videoToggled, "Publish status toggled successfully"))
 })
 
 export {

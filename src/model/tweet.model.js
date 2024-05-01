@@ -2,20 +2,20 @@ import { Schema, Types, model } from "mongoose";
 
 const tweetSchema = new Schema(
     {
-        content:{
-            type:String,
-            required:true
+        content: {
+            type: String,
+            required: true
         },
-        owner:{
-            type:Types.ObjectId,
-            ref:"User"
+        owner: {
+            type: Types.ObjectId,
+            ref: "User"
         },
-        image:{
-            type:String
+        image: {
+            type: String
         }
     },
     {
-        timestamps:true
+        timestamps: true
     }
 )
 
