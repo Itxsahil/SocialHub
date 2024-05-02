@@ -6,22 +6,18 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 const getVideoComments = asyncHandler(async (req, res) => {
     //TODO: get all comments for a video
     const { videoId } = req.params
-    const { page = 1, limit = 10 } = req.query
     if (!videoId) throw new ApiError(404, "VideoId required")
-    const option = {
-        page: parseInt(page),
-        limit: parseInt(limit)
-    }
-    const comments = Comment.paginate(
-        { videoId }, option
-    )
+    const comments = await Comment.find()
+        .sort({ createdAt: -1 })
+        .limit(10)
     if (!comments) throw new ApiError(404, "No comment found for this video")
     return res.status(200)
         .json(new ApiResponse(200, comments, "Comments fetched successfully"));
 })
 
 const addComment = asyncHandler(async (req, res) => {
-    const { comment, videoId } = req.body
+    const { videoId } = req.params
+    const { comment } = req.body
     if (!comment) throw new ApiError(404, "comment could not be empty")
     if (!videoId) throw new ApiError(404, "unable to get video Id")
     const commented = await Comment.create({
@@ -60,7 +56,21 @@ const updateComment = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, updatedComment, "comment updated successfully"))
 })
 
+const deleteCommment = asyncHandler(async (req, res) => {
+    const { commentId, videoId } = req.params
+    if (!commentId) throw new ApiError(404, "Provide a  CommentId..")
+    const findComment = await Comment.findById(commentId)
+    if (!findComment) throw new ApiError(404, "comment not found ")
+    if(findComment.owner.toString() !== req.user._id.toString()) throw new ApiError(404, "unauth request")
+    await Comment.findByIdAndDelete(commentId)
+    if (await Comment.findById(videoId)) throw new ApiError(500, "somthing went wrong while deleting the comment ")
+    return res.status(200)
+    .json(new ApiResponse(201,"comment deleted Sucessfully"))
+})
+
 export {
     addComment,
-    updateComment
+    updateComment,
+    getVideoComments,
+    deleteCommment
 }
