@@ -25,4 +25,4 @@ const likeSchema = new Schema(
     }
 )
 
-export const Likes = model("Likes", likeSchema)
+export const Like = model("Like", likeSchema)
