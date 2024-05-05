@@ -4,7 +4,6 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 import { Like } from "../model/like.model.js"
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
-    console.log(req.params)
     const { videoId } = req.params
     //TODO: toggle like on video
     if (!videoId) throw new ApiError(404, "Provide a videoId")
@@ -25,6 +24,19 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
 const toggleCommentLike = asyncHandler(async (req, res) => {
     const { commentId } = req.params
     //TODO: toggle like on comment
+    if (!commentId) throw new ApiError(404, "Provide a commentId")
+        const existingComment = await Like.findOne({ comment: commentId, likedby: req.user._id })
+        if (existingComment) {
+            await Like.findOneAndDelete({ comment: commentId, likedby: req.user._id })
+            return res.status(200)
+                .json(new ApiResponse(200, {}, "Comment disliked successfully"))
+        }
+        const newComment = await Like.create({
+            comment: commentId,
+            likedby: req.user._id
+        })
+        return res.status(200)
+            .json(new ApiResponse(200, newComment, "Comment liked Successfully"))
 
 })
 
