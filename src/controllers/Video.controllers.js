@@ -49,11 +49,9 @@ const uploadVideo = asyncHandler(async (req, res) => {
 
 })
 const getVideoList = asyncHandler(async (req, res) => {
-    console.log("23y8ytu h g78ffdbjjh8y8")
     const video = await Video.find()
         .sort({ createdAt: -1 })
         .limit(10)
-    console.log(video)
     return res.status(200)
         .json(new ApiResponse(200, video, "ok"))
 })

@@ -1,1 +1,19 @@
 
+const user = await Like.aggregate([
+        {
+            $match:{
+                likedby : mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup:{
+                from:"videos",
+                localField:"video",
+                foreignField:"_id",
+                as:"likedVideos"
+            }
+        },
+        {
+            $unwind:"$likedVideos"
+        }
+    ])
