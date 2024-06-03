@@ -7,6 +7,12 @@ import jwt from "jsonwebtoken";
 import { deleteFromeCloudinary } from "../utils/Cloudinary.delete.js";
 import mongoose from "mongoose";
 
+const isValidGmail = (email) => {
+    // Regular expression for validating Gmail addresses
+    const gmailRegex = /^[^\s@]+@gmail\.com$/;
+    return gmailRegex.test(email);
+}
+
 const generateAccessRefreshTokens = async (userId) => {
     try {
         const user = await User.findById(userId);
@@ -40,50 +46,51 @@ const registerUser = asyncHandler(async (req, res) => {
           */
     const { username, fullname, password, email } = req.body;
 
-    // console.log(req.body)
-
     if (!username) throw new ApiError(400, "Username is required..");
     if (!fullname) throw new ApiError(400, "fullname is required..");
     if (!password) throw new ApiError(400, "password is required..");
     if (!email) throw new ApiError(400, "email is required..");
+
+    if(!isValidGmail(email)) throw new ApiError(400, "Enter a valid email..")
 
     const existeduser = await User.findOne({
         $or: [{ username }, { email }],
     });
 
     if (existeduser) throw new ApiError(409, "User is already exist");
-    // console.log(req.files)
 
-    const avatarLocalPath = req.files?.avatar[0]?.path; // files is use to get an array of buffer
-    // console.log(avatarLocalPath);
-    // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // let avatarLocalPath ;
+    // if (
+    //     req.files &&
+    //     Array.isArray(req.files.avatar) &&
+    //     req.files.avatar.length > 0
+    // ) {
+    //     avatarLocalPath = req.files.avatar[0].path;
+    // }
 
-    let coverImageLocalPath;
+    // let coverImageLocalPath;
 
-    if (
-        req.files &&
-        Array.isArray(req.files.coverImage) &&
-        req.files.coverImage.length > 0
-    ) {
-        coverImageLocalPath = req.files.coverImage[0].path;
-    }
+    // if (
+    //     req.files &&
+    //     Array.isArray(req.files.coverImage) &&
+    //     req.files.coverImage.length > 0
+    // ) {
+    //     coverImageLocalPath = req.files.coverImage[0].path;
+    // }
 
-    if (!avatarLocalPath) throw new ApiError(400, "Avatr file is required ");
+    // if (!avatarLocalPath) throw new ApiError(400, "Avatr file is required ");
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    // const avatar = await uploadOnCloudinary(avatarLocalPath);
+    // const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
-    if (!avatar) throw new ApiError(400, "cloudinary is not  working properly..");
+    // if (!avatar) throw new ApiError(400, "cloudinary is not  working properly..");
 
     const user = await User.create({
-        username,
+        username: username.toLowerCase(),
         email,
         fullname,
-        password,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || "",
+        password
     });
-    // console.log(user)
 
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -97,7 +104,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     return res
         .status(201)
-        .json(new ApiResponse(200, createdUser, "User register successfully "));
+        .json(
+            new ApiResponse(200, 
+                createdUser, 
+                "User register successfully "
+            )
+        );
 });
 
 const loginUser = asyncHandler(async (req, res) => {

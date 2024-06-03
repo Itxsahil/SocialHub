@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import bcrypt from "bcrypt"// it uses for encription and decreption
 import Jwt from "jsonwebtoken";
 
@@ -43,6 +43,10 @@ const userSchema = new Schema(
         refreshToken:{
             type : String,
             default: ""
+        },
+        watchHistory: {
+            type: Types.ObjectId,
+            ref: "Video"
         }
     },
     {
