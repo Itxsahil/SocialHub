@@ -24,7 +24,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 
 // import routes from routers
-
+import healthcheckRouter from "./routes/healthcheck.routes.js"
 import userRouter from "./routes/User.routes.js"
 import videoRouter from "./routes/Video.routes.js"
 import commentRouter from "./routes/Comment.routes.js"
@@ -33,6 +33,7 @@ import tweetRouter from "./routes/Tweet.routes.js"
 
 
 // routes declaration
+app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/videos", videoRouter)
 app.use("/api/v1/comments", commentRouter)
