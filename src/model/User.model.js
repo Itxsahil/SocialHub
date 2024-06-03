@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt"// it uses for encription and decreption
 import Jwt from "jsonwebtoken";
 
@@ -12,12 +12,15 @@ const userSchema = new Schema(
             required: true,
             unique: true,
             index: true,
-            lowercase: true
+            lowercase: true,
+            trim : true
         },
         email: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            lowercase: true,
+            trim : true
         },
         fullname: {
             type: String,
@@ -31,17 +34,15 @@ const userSchema = new Schema(
         },
         avatar: {
             type: String,//true
-            required: true
+            default: "https://greekherald.com.au/wp-content/uploads/2020/07/default-avatar.png"
         },
         coverImage: {
-            type: String
+            type: String,
+            default : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVuC3gaBt0ChFn0jqQsIvU_P1YiQKHRk5cdQ&s"
         },
-        watchHistory: {
-            type: Types.ObjectId,
-            ref: "Video"
-        },
-        refreshToken: {
-            type: String
+        refreshToken:{
+            type : String,
+            default: ""
         }
     },
     {
