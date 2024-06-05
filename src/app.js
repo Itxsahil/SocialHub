@@ -30,6 +30,7 @@ import videoRouter from "./routes/Video.routes.js"
 import commentRouter from "./routes/Comment.routes.js"
 import likeRouter from "./routes/Like.routes.js"
 import tweetRouter from "./routes/Tweet.routes.js"
+import subscriptionRoute from "./routes/Subscription.routes.js"
 
 
 // routes declaration
@@ -39,6 +40,7 @@ app.use("/api/v1/videos", videoRouter)
 app.use("/api/v1/comments", commentRouter)
 app.use("/api/v1/likes", likeRouter)
 app.use("/api/v1/tweets", tweetRouter)
+app.use("/api/v1/subscription", subscriptionRoute)
 
 
 export { app };
